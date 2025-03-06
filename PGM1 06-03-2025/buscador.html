@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Buscar Palabra</title>
+    <style>
+        body {
+            font-family: 'Georgia', serif;
+            background-color: #ccffcc;
+            margin: 20px;
+            text-align: center;
+        }
+        textarea, input {
+            display: block;
+            margin: 10px auto;
+            width: 80%;
+            background-color: #e6cce6;
+            font-family: 'Georgia', serif;
+            padding: 5px;
+            border: 1px solid #999;
+        }
+        button {
+            background-color: #99ccff;
+            border: none;
+            padding: 5px 10px;
+            cursor: pointer;
+            font-family: 'Georgia', serif;
+        }
+        button:hover {
+            background-color: #6699cc;
+        }
+        #resultados {
+            margin-top: 10px;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <h2>Buscar Palabra en Texto</h2>
+    <textarea id="texto" rows="5" placeholder="Escribe varias palabras separadas por líneas..."></textarea>
+    <button onclick="guardarTexto()">Guardar</button>
+    <button onclick="borrarTexto()">Borrar</button>
+    <input type="text" id="buscar" placeholder="Escribe la palabra a buscar">
+    <button onclick="buscarPalabra()">Buscar</button>
+    <h3>Resultados:</h3>
+    <div id="resultados"></div>
+
+    <script>
+        function guardarTexto() {
+            localStorage.setItem("textoGuardado", document.getElementById("texto").value);
+        }
+
+        function borrarTexto() {
+            document.getElementById("texto").value = "";
+        }
+
+        function buscarPalabra() {
+            let textoArea = document.getElementById("texto");
+            let texto = textoArea.value.split("\n");
+            let palabra = document.getElementById("buscar").value.trim().toLowerCase();
+            let resultados = "";
+            let nuevoTexto = textoArea.value;
+            let posiciones = [];
+
+            texto.forEach((linea, index) => {
+                let lowerLinea = linea.toLowerCase();
+                let posicion = lowerLinea.indexOf(palabra);
+                if (posicion !== -1) {
+                    resultados += `Fila ${index + 1}, Posición ${posicion + 1}: ${linea}<br>`;
+                    posiciones.push({ index, palabra });
+                }
+            });
+
+            posiciones.forEach(({ index, palabra }) => {
+                let regex = new RegExp(palabra, "gi");
+                nuevoTexto = nuevoTexto.replace(regex, match => `**${match}**`);
+            });
+
+            textoArea.value = nuevoTexto;
+            document.getElementById("resultados").innerHTML = resultados || "No se encontraron coincidencias";
+        }
+    </script>
+</body>
+</html>
